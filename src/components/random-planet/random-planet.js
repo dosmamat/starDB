@@ -8,29 +8,50 @@ import Spinner from '../spinner/spinner.js';
 export default class RandomPlanet extends Component {
   swap=new SwapiService();
   state={
-    planet:{}
+    planet:{},
+    loading:true
   }
   constructor(){
     super();
     this.updatePlanet();
   }
   onPlanetLoaded=(planet)=>{
-    this.setState({planet});
+    this.setState({
+      planet,
+      loading:false
+    });
+  }
+  onError=(err)=>{
+    console.log("err");
   }
   updatePlanet(){
-    const id=Math.floor(Math.random()*10+2);
+    const id=Math.floor(Math.random()*10000+2);
     this.swap.getPlanet(id)
-      .then(this.onPlanetLoaded);
-     
+      .then(this.onPlanetLoaded)
+      .catch(this.onError);
   }
 
   render() {
 
-    const {planet:{id, name,population, ratationPeriod, diameter}}= this.state;
-    return <Spinner/>;
+    const {planet, loading}= this.state;
+    const spinner =loading?<Spinner/>:null;
+    const content =!loading ? <PlanetView planet={planet}/> : null;
+
     return (
       <div className="random-planet jumbotron rounded">
-        <img className="planet-image"
+        {spinner}
+        {content}
+      </div>
+
+    );
+  }
+}
+
+const PlanetView=({planet})=>{
+  const {id, name,population, ratationPeriod, diameter}=planet;
+  return(
+    <React.Fragment>
+      <img className="planet-image"
              src={`https://starwars-visualguide.com/assets/img/planets/${id}.jpg`} />
         <div>
           <h4>{name}</h4>
@@ -49,8 +70,6 @@ export default class RandomPlanet extends Component {
             </li>
           </ul>
         </div>
-      </div>
-
-    );
-  }
+    </React.Fragment>
+  )
 }
