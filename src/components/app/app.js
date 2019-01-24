@@ -7,22 +7,32 @@ import PersonDetails from '../person-details';
 
 import './app.css';
 
-const App = () => {
-  return (
-    <div>
-      <Header />
-      <RandomPlanet />
-
-      <div className="row mb2">
-        <div className="col-md-6">
-          <ItemList />
-        </div>
-        <div className="col-md-6">
-          <PersonDetails />
+export default class App extends React.Component {
+  state={
+    selectPerson:null
+  }
+  onPersonSelected=(id)=>{
+    this.setState({
+      selectPerson:id
+    })
+    console.log("select"+id)
+  }
+  render(){
+    return (
+      <div>
+        <Header />
+        <RandomPlanet />
+  
+        <div className="row mb2">
+          <div className="col-md-6">
+            <ItemList  onItemSelected={this.onPersonSelected}/>
+          </div>
+          <div className="col-md-6">
+            <PersonDetails personId={this.state.selectPerson} />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+ 
 };
-
-export default App;

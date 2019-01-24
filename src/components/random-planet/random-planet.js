@@ -4,41 +4,55 @@ import SwapiService from '../../services/swapi-service';
 
 import './random-planet.css';
 import Spinner from '../spinner/spinner.js';
+import Error from '../error/error';
 
 export default class RandomPlanet extends Component {
   swap=new SwapiService();
   state={
     planet:{},
-    loading:true
+    loading:true,
+    error:false
   }
   constructor(){
     super();
+    
+  }
+  componentDidMount(){
     this.updatePlanet();
+    setInterval(this.updatePlanet,3000);
+
   }
   onPlanetLoaded=(planet)=>{
     this.setState({
       planet,
-      loading:false
+      loading:false,
+      error:false
     });
   }
   onError=(err)=>{
     console.log("err");
+    this.setState({
+      error:true,
+      loading:false
+    })
   }
-  updatePlanet(){
-    const id=Math.floor(Math.random()*10000+2);
+  updatePlanet=()=>{
+    const id=Math.floor(Math.random()*10)+3;
     this.swap.getPlanet(id)
       .then(this.onPlanetLoaded)
       .catch(this.onError);
   }
 
   render() {
-
-    const {planet, loading}= this.state;
+    const {planet, loading, error}= this.state;
+    const hasData=!(loading|| error);
+    const errorMessage=error?<Error/>:null;
     const spinner =loading?<Spinner/>:null;
-    const content =!loading ? <PlanetView planet={planet}/> : null;
+    const content =hasData ? <PlanetView planet={planet}/> : null;
 
     return (
       <div className="random-planet jumbotron rounded">
+      {errorMessage}
         {spinner}
         {content}
       </div>

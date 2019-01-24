@@ -57,7 +57,7 @@ export default class SwapiService {
     };
   }
 
-  _transformStarship(starship) {
+  _transformStarship=(starship)=> {
     return {
       id: this._extractId(starship),
       name: starship.name,
@@ -71,7 +71,7 @@ export default class SwapiService {
     }
   }
 
-  _transformPerson(person) {
+  _transformPerson=(person)=> {
     return {
       id: this._extractId(person),
       name: person.name,
